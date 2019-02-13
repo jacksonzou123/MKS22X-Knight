@@ -45,6 +45,14 @@ public class KnightBoard{
       }
     }
     Board[startingRow][startingCol] == 1;
-    return solveH(startingRow,startingCol);
+    return solveH(startingRow,startingCol, 2);
   }
+
+  private boolean solveH(int row, int col, int level) {
+    if (level > rows * cols) {
+      return true;
+    }
+    return false;
+  }
+
 }
