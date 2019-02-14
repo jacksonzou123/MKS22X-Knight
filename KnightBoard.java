@@ -52,7 +52,20 @@ public class KnightBoard{
       return true;
     }
     if (addKnight(row,col,level)) {
-      return solveH()
+      if (solveH(row-2,col-1,level+1) ||
+          solveH(row-2,col+1,level+1) ||
+          solveH(row-1,col+2,level+1) ||
+          solveH(row+1,col+2,level+1) ||
+          solveH(row+2,col+1,level+1) ||
+          solveH(row+2,col-1,level+1) ||
+          solveH(row+1,col-2,level+1) ||
+          solveH(row-1,col-2,level+1) ) {
+        return true;
+      }
+      else {
+        removeKnight(row,col);
+        return false;
+      }
     }
   }
 
