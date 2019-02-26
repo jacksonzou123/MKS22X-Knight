@@ -1,6 +1,9 @@
 public class Driver{
   public static void main(String[] args) {
-    KnightBoard test = new KnightBoard(5,5);
-    System.out.println(test.countSolutions(0,0));
+    KnightBoard.runTest(1);
+    KnightBoard.runTest(2);
+    KnightBoard.runTest(3);
+    KnightBoard.runTest(4);
+    KnightBoard.runTest(5);
   }
 }
