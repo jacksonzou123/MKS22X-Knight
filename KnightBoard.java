@@ -11,14 +11,7 @@ public class KnightBoard{
     Board = new int[startingRows][startingCols];
     rows = startingRows;
     cols = startingCols;
-    moves = new int[] {1, -2
-                       -1, -2,
-                       2, -1,
-                       2, 1,
-                       -2, -1,
-                       -2, 1,
-                       1, 2,
-                       -1, 2};
+    moves = new int[] {-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};
   }
 
   public String toString() {
@@ -60,16 +53,20 @@ public class KnightBoard{
       return true;
     }
     if (addKnight(row,col,level)) {
-      //System.out.println(this);
-      for (int i = 0; i < moves.length; i+=2) {
-        if (solveH(row + moves[i],col + moves[i+1],level+1)) {
-          return true;
-        }
-      }
-    }
-    else {
-     removeKnight(row,col);
-    }
+      if (solveH(row-2,col-1,level+1) ||
+          solveH(row-2,col+1,level+1) ||
+          solveH(row-1,col+2,level+1) ||
+          solveH(row+1,col+2,level+1) ||
+          solveH(row+2,col+1,level+1) ||
+          solveH(row+2,col-1,level+1) ||
+          solveH(row+1,col-2,level+1) ||
+          solveH(row-1,col-2,level+1) ) {
+            return true;
+          }
+       else {
+         removeKnight(row,col);
+       }
+     }
     return false;
   }
 
@@ -108,20 +105,19 @@ public class KnightBoard{
 
   private int countH(int row, int col, int level) {
     int f = 0;
-    if (level > rows * cols) {
+    if (level == rows * cols) {
       return 1;
     }
-    if (addKnight(row,col,level)) {
-      f += countH(row-2,col-1,level+1);
-      f += countH(row-2,col+1,level+1);
-      f += countH(row-1,col+2,level+1);
-      f += countH(row+1,col+2,level+1);
-      f += countH(row+2,col+1,level+1);
-      f += countH(row+2,col-1,level+1);
-      f += countH(row+1,col-2,level+1);
-      f += countH(row-1,col-2,level+1);
-      removeKnight(row,col);
+    addKnight(row, col, level);
+    for (int i = 0; i < moves.length; i += 2) {
+      if (row + moves[i] < rows && row + moves[i] >= 0 &&
+          col + moves[i + 1] < cols && col + moves[i + 1] >= 0 &&
+          Board[row + moves[i]][col + moves[i + 1]] == 0) {
+        f += countH(row + moves[i], col + moves[i+1], level + 1);
+      }
+
     }
+    removeKnight(row, col);
     return f;
   }
 
