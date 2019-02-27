@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class KnightBoard{
   private int[][] Board;
   private int[][] check;
@@ -67,24 +70,40 @@ public class KnightBoard{
   }
 
   private boolean solveH(int row, int col, int level) {
+    check[row][col] *= -1;
+    int[] valid = new int[16];
     if (level > rows * cols) {
       return true;
     }
     if (addKnight(row,col,level)) {
-      if (solveH(row-2,col-1,level+1) ||
-          solveH(row-2,col+1,level+1) ||
-          solveH(row-1,col+2,level+1) ||
-          solveH(row+1,col+2,level+1) ||
-          solveH(row+2,col+1,level+1) ||
-          solveH(row+2,col-1,level+1) ||
-          solveH(row+1,col-2,level+1) ||
-          solveH(row-1,col-2,level+1) ) {
-            return true;
+      for (int i = 0; i < moves.length; i+=2) {
+        if (addKnight(row+moves[i],col+moves[i+1],1)) {
+          valid[i] = moves[i];
+          valid[i+1] = moves[i+1];
+          removeKnight(row+moves[i],col+moves[i+1]);
+          check[row+moves[i]][col+moves[i+1]] -= 1;
+        }
+      }
+      int sol = 0;
+      while (sol < 9) {
+        for (int i = 0; i < moves.length; i+=2) {
+          if (valid[i] != 0) {
+            if (check[row+valid[i]][col+valid[i+1]] == sol) {
+              if (solveH(row+valid[i],col+valid[i+1],level+1)) {
+                return true;
+              }
+            }
           }
-       else {
-         removeKnight(row,col);
-       }
-     }
+        }
+      }
+      removeKnight(row,col);
+      for (int i = 0; i < valid.length; i+=2) {
+        if (valid[i] != 0) {
+          check[row+valid[i]][col+valid[i+1]] += 1;
+        }
+      }
+      check[row][col] *= -1;
+    }
     return false;
   }
 
@@ -133,8 +152,7 @@ public class KnightBoard{
           Board[row + moves[i]][col + moves[i + 1]] == 0) {
         f += countH(row + moves[i], col + moves[i+1], level + 1);
       }
-
-    }
+      }
     removeKnight(row, col);
     return f;
   }
