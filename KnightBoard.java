@@ -70,39 +70,42 @@ public class KnightBoard{
   }
 
   private boolean solveH(int row, int col, int level) {
-    check[row][col] *= -1;
-    int[] valid = new int[16];
+    //System.out.println(this);
+    //System.out.println(printCheck());
+    int[][] valid = new int[check[row][col]][3];
     if (level > rows * cols) {
       return true;
     }
     if (addKnight(row,col,level)) {
+      int index = 0;
       for (int i = 0; i < moves.length; i+=2) {
-        if (addKnight(row+moves[i],col+moves[i+1],1)) {
-          valid[i] = moves[i];
-          valid[i+1] = moves[i+1];
-          removeKnight(row+moves[i],col+moves[i+1]);
-          check[row+moves[i]][col+moves[i+1]] -= 1;
+        if (row + moves[i] >= 0 &&
+            row + moves[i] < rows &&
+            col + moves[i+1] >= 0 &&
+            col + moves[i+1] < cols &&
+            check[row + moves[i]][col + moves[i+1]] > 0) {
+          valid[index][0] = moves[i];
+          valid[index][1] = moves[i+1];
+          valid[index][2] = check[row+moves[i]][col+moves[i+1]];
+          index++;
         }
       }
-      int sol = 0;
-      while (sol < 9) {
-        for (int i = 0; i < moves.length; i+=2) {
-          if (valid[i] != 0) {
-            if (check[row+valid[i]][col+valid[i+1]] == sol) {
-              if (solveH(row+valid[i],col+valid[i+1],level+1)) {
-                return true;
-              }
-            }
-          }
+      int old = check[row][col];
+      check[row][col] = 0;
+      sort(valid);
+      for (int i = 0; i < valid.length; i++) {
+        //check[row + valid[i][0]][col + valid[i][1]]--;
+      }
+      for (int i = 0; i < valid.length; i++) {
+        if (solveH(row + valid[i][0], col + valid[i][1], level+1)) {
+          return true;
         }
       }
       removeKnight(row,col);
-      for (int i = 0; i < valid.length; i+=2) {
-        if (valid[i] != 0) {
-          check[row+valid[i]][col+valid[i+1]] += 1;
-        }
+      for (int i = 0; i < valid.length; i++) {
+        //check[row + valid[i][0]][col + valid[i][1]]++;
       }
-      check[row][col] *= -1;
+      check[row][col] = old;
     }
     return false;
   }
@@ -167,6 +170,18 @@ public class KnightBoard{
     }
     check[row][col] = f;
   }
+
+  public static void sort(int[][] data) {
+  for (int i = 1; i < data.length; i++) {
+    int[] hold = data[i];
+    int index = i-1;
+    while (index >= 0 && data[index][2] > hold[2]) {
+      data[index+1] = data[index];
+      index-=1;
+    }
+    data[index+1] = hold;
+  }
+}
 
   public static void runTest(int i){
   KnightBoard b;
