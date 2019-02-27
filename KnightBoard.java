@@ -1,5 +1,6 @@
 public class KnightBoard{
   private int[][] Board;
+  private int[][] check;
   private int rows;
   private int cols;
   private int[] moves;
@@ -12,6 +13,12 @@ public class KnightBoard{
     rows = startingRows;
     cols = startingCols;
     moves = new int[] {-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};
+    check = new int[rows][cols];
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        fill(row,col);
+      }
+    }
   }
 
   public String toString() {
@@ -28,6 +35,17 @@ public class KnightBoard{
         else {
           f += Board[i][j] + " ";
         }
+      }
+      f += "\n";
+    }
+    return f;
+  }
+
+  public String printCheck() {
+    String f = "";
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++) {
+        f += check[i][j] + " ";
       }
       f += "\n";
     }
@@ -119,6 +137,17 @@ public class KnightBoard{
     }
     removeKnight(row, col);
     return f;
+  }
+
+  private void fill(int row, int col) {
+    int f = 0;
+    for (int i = 0; i < moves.length; i+=2) {
+      if (addKnight(row+moves[i],col+moves[i+1],1)) {
+        f += 1;
+        removeKnight(row+moves[i],col+moves[i+1]);
+      }
+    }
+    check[row][col] = f;
   }
 
   public static void runTest(int i){
